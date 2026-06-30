@@ -20,6 +20,16 @@ spec:
         image: nginx:1.27-alpine
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        envFrom:
+        - secretRef:
+            name: webapp-secret
         readinessProbe:
           httpGet:
             path: /
@@ -32,3 +42,10 @@ spec:
             port: 80
           initialDelaySeconds: 10
           periodSeconds: 10
+        volumeMounts:
+        - name: content
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: content
+        configMap:
+          name: webapp-content
